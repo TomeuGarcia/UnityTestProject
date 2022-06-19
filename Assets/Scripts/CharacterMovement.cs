@@ -7,12 +7,10 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] float maxMoveSpeed;
     [SerializeField] float jumpSpeed;
-    private Vector2 moveDirection;
-
     [SerializeField] float acceleration;
-
     [SerializeField] TriggerNotifyer groundTriggerNotifyer;
 
+    private Vector2 moveDirection;
 
     public delegate void MovementAction();
     public static event MovementAction OnJump;
@@ -21,7 +19,6 @@ public class CharacterMovement : MonoBehaviour
 
     private void Awake()
     {
-        
     }
 
 
@@ -37,26 +34,17 @@ public class CharacterMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && groundTriggerNotifyer.isInsideCollider)
         {
-            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            Jump();
         }
+
+
+
 
     }
 
 
     private void FixedUpdate()
     {
-        //if (pressedJump)
-        //{
-        //    Debug.Log("Jump");
-        //    rb.AddForce(Vector2.up * 3000.0f, ForceMode2D.Impulse);
-        //    pressedJump = false;
-        //}
-
-        //Vector2 movement = moveDirection * moveSpeed;// * Time.fixedDeltaTime;
-        //rb.MovePosition(rb.position + movement);
-        //rb.velocity = movement;
-
-
         rb.AddForce(moveDirection * acceleration, ForceMode2D.Force);
         if (Mathf.Abs(rb.velocity.x) > maxMoveSpeed) 
         {
@@ -67,5 +55,10 @@ public class CharacterMovement : MonoBehaviour
 
     }
 
+
+    private void Jump()
+    {
+        rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+    }
 
 }
