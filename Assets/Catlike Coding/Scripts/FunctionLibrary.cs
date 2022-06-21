@@ -6,35 +6,29 @@ public static class FunctionLibrary
 {
     public delegate Vector3 Function(float u, float v, float t);
 
-    public enum FunctionName
-    {
-        Wave, MultiWave, Ripple,
-        Sphere, CollapsingSphere, VerticalBandsSphere, HorizontalBandsSphere, TwistingBandsSphere,
-        Torus, TwistingTorus
-    };
+    //public enum FunctionName
+    //{
+    //    Wave, MultiWave, Ripple,
+    //    Sphere, CollapsingSphere, VerticalBandsSphere, HorizontalBandsSphere, TwistingBandsSphere,
+    //    Torus, TwistingTorus
+    //};
 
-    private static Function[] functions = { Wave, MultiWave, Ripple,
-                                            Sphere, CollapsingSphere, VerticalBandsSphere, HorizontalBandsSphere, TwistingBandsSphere,
-                                            Torus, TwistingTorus };
-
-
-
-    //public enum FunctionName { Wave, MultiWave, Ripple, TwistingBandsSphere, TwistingTorus };
-
-    //private static Function[] functions = { Wave, MultiWave, Ripple, TwistingBandsSphere, TwistingTorus };
+    //private static Function[] functions = { Wave, MultiWave, Ripple,
+    //                                        Sphere, CollapsingSphere, VerticalBandsSphere, HorizontalBandsSphere, TwistingBandsSphere,
+    //                                        Torus, TwistingTorus };
 
 
 
+    public enum FunctionName { Wave, MultiWave, Ripple, TwistingBandsSphere, TwistingTorus };
 
-    public static Function GetFunction(FunctionName functionName)
-    {
-        return functions[(int)functionName];
-    }
+    private static Function[] functions = { Wave, MultiWave, Ripple, TwistingBandsSphere, TwistingTorus };
 
-    public static FunctionName GetNextFunctionName(FunctionName name)
-    {
-        return (int)name < functions.Length - 1 ? name + 1 : (FunctionName)0;
-    }
+    public static int FunctionCount => functions.Length;
+
+    public static Function GetFunction(FunctionName functionName) => functions[(int)functionName];
+
+    public static FunctionName GetNextFunctionName(FunctionName name) => (int)name < functions.Length - 1 ? name + 1 : (FunctionName)0;
+
 
     public static FunctionName GetRandomFunctionName()
     {
