@@ -6,80 +6,75 @@ using UnityEngine;
 
 using static Unity.Mathematics.math;
 
-public class HashVisualization : MonoBehaviour
+public class HashVisualization : Visualization
 {
     [BurstCompile(FloatPrecision.Standard, FloatMode.Fast, CompileSynchronously = true)]
     struct HashJob : IJobFor
     {
-        [WriteOnly] public NativeArray<uint> hashes;
-        public int resolution;
-        public float invResolution;
+        [ReadOnly] public NativeArray<float3x4> positions;
+        [WriteOnly] public NativeArray<uint4> hashes;
+        public SmallXXHash4 hash;
+        public float3x4 domainTRS;
 
         public void Execute(int i)
         {
-            float v = floor(invResolution * i + 0.00001f);
-            float u = i - resolution * v;
+            float4x3 p = MathExtensions.TransformVectors(domainTRS, transpose(positions[i]));
 
-            hashes[i] = (uint)(frac(u * v * 0.381f) * 256f);
+            int4 u = (int4)floor(p.c0);
+            int4 v = (int4)floor(p.c1);
+            int4 w = (int4)floor(p.c2);
+
+            hashes[i] = hash.Eat(u).Eat(v).Eat(w);
         }
 
     }
 
 
     static int hashesId = Shader.PropertyToID("_Hashes");
-    static int configId = Shader.PropertyToID("_Config");
 
-    [SerializeField] Mesh instanceMesh;
-    [SerializeField] Material material;
-    [SerializeField, Range(1, 512)] int resolution = 16;
 
-    NativeArray<uint> hashes;
+    [SerializeField] int seed;
+    [SerializeField] SpaceTRS domain = new SpaceTRS { scale = 8.0f };
+
+
+    NativeArray<uint4> hashes;
     ComputeBuffer hashesBuffer;
-    MaterialPropertyBlock propertyBlock;
 
 
-    private void OnEnable()
+
+    protected override void EnableVisualization(int dataLength, MaterialPropertyBlock propertyBlock)
     {
-        int length = resolution * resolution;
+        hashes = new NativeArray<uint4>(dataLength, Allocator.Persistent);
 
-        hashes = new NativeArray<uint>(length, Allocator.Persistent);
-        hashesBuffer = new ComputeBuffer(length, sizeof(uint));
+        hashesBuffer = new ComputeBuffer(dataLength * 4, sizeof(uint));
 
-        new HashJob
-        {
-            hashes = hashes,
-            resolution = resolution,
-            invResolution = 1.0f / resolution
-        }.ScheduleParallel(hashes.Length, resolution, default).Complete();
-
-        hashesBuffer.SetData(hashes);
-
-        propertyBlock ??= new MaterialPropertyBlock();
         propertyBlock.SetBuffer(hashesId, hashesBuffer);
-        propertyBlock.SetVector(configId, new Vector4(resolution, 1.0f / resolution));
     }
 
-    private void OnDisable()
+    protected override void DisableVisualization()
     {
         hashes.Dispose();
+
         hashesBuffer.Release();
         hashesBuffer = null;
     }
 
-    private void OnValidate()
+
+
+
+    protected override void UpdateVisualization(NativeArray<float3x4> positions, int resolution, JobHandle handle)
     {
-        if (hashesBuffer != null && enabled)
+        new HashJob
         {
-            OnDisable();
-            OnEnable();
-        }
+            positions = positions,
+            hashes = hashes,
+            hash = SmallXXHash4.Seed(seed),
+            domainTRS = domain.Matrix
+        }.ScheduleParallel(hashes.Length, resolution, handle).Complete();
+
+        hashesBuffer.SetData(hashes.Reinterpret<uint>(4 * 4));
     }
 
 
-
-    private void Update()
-    {
-        Graphics.DrawMeshInstancedProcedural(instanceMesh, 0, material, new Bounds(Vector3.zero, Vector3.one), hashes.Length, propertyBlock);
-    }
 
 }
