@@ -89,7 +89,7 @@ public static partial class Noise
             LatticeSpan4 x = default(L).GetLatticeSpan4(positions.c0, frequency);
             var g = default(G);
 
-            return g.EvaluateAfterInterpolation(lerp(g.Evaluate(hash.Eat(x.p0), x.g0), g.Evaluate(hash.Eat(x.p1), x.g1), x.t));
+            return g.EvaluateCombined(lerp(g.Evaluate(hash.Eat(x.p0), x.g0), g.Evaluate(hash.Eat(x.p1), x.g1), x.t));
         }
 
     }
@@ -107,7 +107,7 @@ public static partial class Noise
 
             var g = default(G);
 
-            return g.EvaluateAfterInterpolation(lerp(
+            return g.EvaluateCombined(lerp(
                 lerp(g.Evaluate(h0.Eat(z.p0), x.g0, z.g0),
                      g.Evaluate(h0.Eat(z.p1), x.g0, z.g1),
                      z.t),
@@ -140,7 +140,7 @@ public static partial class Noise
 
             var g = default(G);
 
-            return g.EvaluateAfterInterpolation(lerp(
+            return g.EvaluateCombined(lerp(
                         lerp(
                             lerp(
                                 g.Evaluate(h00.Eat(z.p0), x.g0, y.g0, z.g0),
