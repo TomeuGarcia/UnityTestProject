@@ -33,5 +33,7 @@ namespace ProceduralMeshes
     }
 
 
+	public delegate JobHandle MeshJobScheduleDelegate(Mesh mesh, Mesh.MeshData meshData, int resolution, JobHandle dependancy);
+
 
 }

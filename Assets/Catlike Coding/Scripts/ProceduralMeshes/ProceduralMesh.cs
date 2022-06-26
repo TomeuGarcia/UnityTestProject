@@ -9,7 +9,21 @@ public class ProceduralMesh : MonoBehaviour
 {
     Mesh mesh;
 
-    [SerializeField, Range(1, 10)] int resolution = 1;
+    [SerializeField, Range(1, 50)] int resolution = 1;
+
+    public enum MeshType { SquareGrid, SharedSquareGrid, SharedTriangleGrid, PointyHexagonGrid, FlatHexagonGrid };
+    [SerializeField] MeshType meshType = MeshType.SquareGrid;
+
+    static MeshJobScheduleDelegate[] jobs =
+    {
+        MeshJob<SquareGrid, SingleStream>.ScheduleParallel,
+        MeshJob<SharedSquareGrid, SingleStream>.ScheduleParallel,
+        MeshJob<SharedTriangleGrid, SingleStream>.ScheduleParallel,
+        MeshJob<PointyHexagonGrid, SingleStream>.ScheduleParallel,
+        MeshJob<FlatHexagonGrid, SingleStream>.ScheduleParallel
+    };
+
+
 
 
     private void Awake()
@@ -40,7 +54,7 @@ public class ProceduralMesh : MonoBehaviour
         Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
         Mesh.MeshData meshData = meshDataArray[0];
 
-        MeshJob<SquareGrid, MultiStream>.ScheduleParallel(mesh, meshData, resolution, default).Complete();
+        jobs[(int)meshType](mesh, meshData, resolution, default).Complete();
 
         Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, mesh);
     }
