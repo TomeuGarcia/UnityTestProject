@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9005245921678062747}
   - component: {fileID: 9005245921678062746}
   - component: {fileID: 9005245921678062741}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CustomGravityCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,3 +126,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floatToSleep: 1
+  submergenceOffset: 0.5
+  submergenceRange: 1
+  buoyancy: 1
+  waterDrag: 1
+  waterMask:
+    serializedVersion: 2
+    m_Bits: 0
+  buoyancyOffset: {x: 0, y: 0.01, z: 0}

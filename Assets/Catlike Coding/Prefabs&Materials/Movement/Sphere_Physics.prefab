@@ -233,8 +233,17 @@ MonoBehaviour:
   maxGroundAngle: 25
   maxStairsAngle: 50
   maxClimbAngle: 140
+  maxClimbSpeed: 2
+  maxClimbAcceleration: 40
   maxSnapSpeed: 100
   probeDistance: 1
+  submergenceOffset: 0.5
+  submergenceRange: 1
+  waterDrag: 1
+  buoyancy: 1.1
+  swimmingThreshold: 0.5
+  maxSwimSpeed: 5
+  maxSwimAcceleration: 5
   probeMask:
     serializedVersion: 2
     m_Bits: 307
@@ -244,3 +253,6 @@ MonoBehaviour:
   climbMask:
     serializedVersion: 2
     m_Bits: 371
+  waterMask:
+    serializedVersion: 2
+    m_Bits: 16
