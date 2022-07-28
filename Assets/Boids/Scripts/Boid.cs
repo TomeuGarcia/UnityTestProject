@@ -56,7 +56,8 @@ public class Boid : MonoBehaviour
 
     public void SetColor(Color color)
     {
-        material.color = color;
+        material.SetColor("_BaseColor", color);
+        //material.color = color;
     }
 
     public void ComputeState()
